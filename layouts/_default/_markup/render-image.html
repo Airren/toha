@@ -1,0 +1,45 @@
+<p class="md__image">
+<!--    {{23 -}} < & {{- 45}}-->
+<!--    {{/* hello */}}-->
+<!--    {{/* a comment */}}-->
+<!--    {{- /* a comment with white space trimmed from preceding and following text */ -}}-->
+<!--    A comment; discarded. May contain newlines.-->
+<!--    Comments do not nest and must start and end at the-->
+<!--    delimiters, as shown here.-->
+<!--    {{print "hello"}}-->
+
+    {{- if .Page.Site.Params.BookPortableLinks -}}
+        {{- template "portable-image" . -}}
+    {{- else -}}
+    {{- template "portable-image" . -}}
+    <!-- {{printf "%#v" .Destination }} -->
+<!--        {{- $dir := (index (split .Destination "/") 1)}}-->
+<!--        {{ $img_url := print "./" $dir }}-->
+<!--    {{ $img_url := print "" .Destination }}-->
+<!--    <img src="{{ $img_url | safeURL }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}" {{ end }}/>-->
+    {{- end -}}
+
+    {{- define "portable-image" -}}
+        {{- $isRemote := or (in .Destination "://") (strings.HasPrefix .Destination "//") }}
+        {{- if not $isRemote }}
+            {{- $path := print .Page.File.Dir .Destination }}
+        {{- if strings.HasPrefix .Destination "/" }}
+            {{- $path = print "/static" .Destination }}
+        {{- end }}
+        {{- if not (fileExists $path) }}
+         {{- warnf "Image '%s' not found in '%s'" .Destination .Page.File }}
+        {{- end }}
+        {{- end }}
+
+  
+        {{- $dir := (index (split .Destination "/") 1 ) }}
+        {{- if strings.HasPrefix .Destination "." }}
+             {{ $dir = (index (split .Destination "/") 2 )  }}
+                
+        {{- end -}}
+        <img src="{{ $dir | safeURL }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}" {{ end }}/>
+    
+    
+    {{- end -}}
+
+</p>
